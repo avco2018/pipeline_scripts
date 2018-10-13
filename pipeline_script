@@ -1,0 +1,40 @@
+//def mvnHome
+//pipeline {
+//agent any
+node {
+   def mvnHome
+   def gitURL
+   def buildFilepath
+   def buildFile
+   
+   stage('Preparation') { // for display purposes
+      // Get some code from a GitHub repository
+      def jenkinFilepath = Jenkinsfile
+      echo "jenkinsFile:  "+jenkinFilepath
+      def jenkinFileURL  = "https://github.com/avco2018/avco1234.git"
+      git '${gitURL}'
+      // Get the Maven tool.
+      // ** NOTE: This 'M3' Maven tool must be configured
+      // **       in the global configuration.           
+      mvnHome = tool 'Maven_3.0.5'
+   }
+   stage('Build') {
+      // Run the maven build
+      if (isUnix()) {
+         dir('${buildFilepath}') {
+         sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
+         }
+      } else {
+         bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean package/)
+         }
+   }
+   //stage('Results') {
+      //junit '**/target/surefire-reports/TEST-*.xml'
+     // archive 'target/*.jar'
+   //}
+   //stage('Archive') {
+       //Move *.jar to fslocation
+       //archiveArtifacts allowEmptyArchive: true, artifacts: 'target/*.jar', onlyIfSuccessful: true
+  // }
+//}
+}
